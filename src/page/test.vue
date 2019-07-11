@@ -1,23 +1,6 @@
 <template>
   <div>
-    <input @blur="isFocus = false"
-           @focus="isFocus = true"
-           v-shortcut="{valid: isFocus, fn: callShortcut}"
-           type="text">
-    <br />
-    <input @blur="isFocus1 = false"
-           @focus="isFocus1 = true"
-           v-shortcut="{valid: isFocus1, fn: callShortcut1}"
-           type="text">
-    <ul v-shortcut:document="{ valid: true, fn: callShortcut2 }">
-      <li style="margin: 5px;"
-          v-for="(v, i) in arr"
-          :key="i"
-          :class="v.sel ? 'selected' : ''"
-          @click="clickSelected(v, i)">
-        {{ v.value }}
-      </li>
-    </ul>
+    <button @click="clickTest1">test1</button>
   </div>
 </template>
 
@@ -28,31 +11,6 @@ export default {
   components: {},
   data () {
     return {
-      isFocus: false,
-      isFocus1: false,
-      ctrlDown: false,
-      arr: [{
-        id: 1,
-        value: '11111',
-        sel: false
-      }, {
-        id: 2,
-        value: '22222',
-        sel: false
-      }, {
-        id: 3,
-        value: '33333',
-        sel: false
-      }, {
-        id: 4,
-        value: '44444',
-        sel: false
-      }, {
-        id: 5,
-        value: '55555',
-        sel: false
-      }],
-      selArr: []
     }
   },
   computed: {},
@@ -60,56 +18,17 @@ export default {
   created () { },
   mounted () { },
   methods: {
-    callShortcut (keyValue, e) {
-      if (keyValue) {
-        console.log('-keyValue-', keyValue)
-        return false
-      } else {
-        return true
-      }
+    checkEnNum (str) {
+      var regex = /^[A-Za-z0-9_-]+$/
+      return regex.test(str)
     },
-    callShortcut1 (keyValue, e) {
-      if (keyValue) {
-        console.log('-keyValue1-', keyValue)
-        return false
-      } else {
-        return true
-      }
-    },
-    callShortcut2 (keyValue, e) {
-      this.ctrlDown = e.ctrlKey
-      return false
-    },
-    clickSelected (v) {
-      v.sel = !v.sel
-      if (this.ctrlDown) {
-        if (v.sel) {
-          this.selArr.push(v)
-        } else {
-          for (let i = this.selArr.length - 1; i >= 0; i--) {
-            if (this.selArr[i].id === v.id) {
-              this.selArr.splice(i, 1)
-              break
-            }
-          }
-        }
-      } else {
-        for (let i = this.selArr.length - 1; i >= 0; i--) {
-          this.selArr[i].sel = false
-        }
-        if (v.sel) {
-          this.selArr = [v]
-        } else {
-          this.selArr = []
-        }
-      }
+    clickTest1 () {
+      let tmpHenpinNo = '2-001213_a'
+      console.log('b', this.checkEnNum(tmpHenpinNo))
     }
   }
 }
 </script>
 
 <style scoped rel="stylesheet">
-.selected {
-  background: red;
-}
 </style>

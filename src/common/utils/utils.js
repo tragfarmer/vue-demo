@@ -10,23 +10,19 @@ export default {
    * 对象克隆
    */
   clone (obj) {
-    return Object.create(
-      Object.getPrototypeOf(obj),
-      Object.getOwnPropertyDescriptors(obj)
-    )
-    // if (typeof obj !== 'object') return obj
-    // let newObj = obj instanceof Array ? [] : {}
-    // for (let i in obj) {
-    //   let val = obj[i]
-    //   if (val instanceof Date) {
-    //     newObj[i] = new Date(val.valueOf())
-    //   } else if (!val) {
-    //     newObj[i] = val
-    //   } else {
-    //     newObj[i] = typeof val === 'object' ? this.clone(val) : val
-    //   }
-    // }
-    // return newObj
+    if (typeof obj !== 'object') return obj
+    let newObj = obj instanceof Array ? [] : {}
+    for (let i in obj) {
+      let val = obj[i]
+      if (val instanceof Date) {
+        newObj[i] = new Date(val.valueOf())
+      } else if (!val) {
+        newObj[i] = val
+      } else {
+        newObj[i] = typeof val === 'object' ? this.clone(val) : val
+      }
+    }
+    return newObj
   },
 
   /**

@@ -1,13 +1,12 @@
 /* eslint-disable space-before-function-paren */
 export default {
   /**
-   * 通过数字无素对象的字段排序（正序）
-   * Object Array Sorting
+   * 根报元素中指定字段排序（正序）
    * @param {*} objArr
    * @param {*} field    sort field
    * @returns
    */
-  sortByObjField(objArr, field) {
+  sortByField(objArr, field) {
     function compare(property) {
       return function(a, b) {
         let value1 = a[property]
@@ -19,13 +18,12 @@ export default {
   },
 
   /**
-   * 通过数字无素对象的字段排序（倒序）
-   * Object Array Sorting
+   * 根报元素中指定字段排序（倒序）
    * @param {*} objArr
    * @param {*} field    sort field
    * @returns
    */
-  sortByObjFieldReverseOrder(objArr, field) {
+  sortByFieldInReverseOrder(objArr, field) {
     function compare(property) {
       return function(a, b) {
         let value1 = a[property]
@@ -37,12 +35,12 @@ export default {
   },
 
   /**
-   * 将数组切割为二维数字
+   * 转换为二维数组
    * Split into two-dimensional arrays
    * @param {*} arr
-   * @param {*} count
+   * @param {*} colomns 多少长度一组
    */
-  intoDyadicArr(arr, colomns) {
+  convertTda(arr, colomns) {
     let result = []
     for (let i = 0, len = arr.length; i < len; i += colomns) {
       result.push(arr.slice(i, i + colomns))
