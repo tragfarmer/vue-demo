@@ -1,6 +1,8 @@
 /* eslint-disable space-before-function-paren */
 
 /**
+ * 苹果电脑浏览器不兼容，不建议使用。
+ * 该指令暂放在这里，有空再想想有没兼容写法。
  * use：
  * v-e-number:3="{fn: v => { input = v }}"
  */

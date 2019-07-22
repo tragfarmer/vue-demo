@@ -31,6 +31,7 @@
 
 <script>
 import User from '@/common/user.js'
+import Cookie from '@/common/cookie.js'
 export default {
   data: function () {
     return {
@@ -48,15 +49,32 @@ export default {
       }
     }
   },
+  computed: {
+    account: {
+      get () {
+        let sub = Cookie.getCookie('vue-demo-account')
+        if (sub && sub.length !== 0) JSON.parse(sub)
+        else return null
+      },
+      set (val) {
+        Cookie.setCookie('vue-demo-account', JSON.stringify(val))
+      }
+    }
+  },
+  mounted () {
+    if (this.account) {
+      this.ruleForm.username = this.account.username
+      this.ruleForm.password = this.account.password
+    }
+  },
   methods: {
-
     submitForm (formName) {
       const self = this
       self.$refs[formName].validate((valid) => {
         if (valid) {
           let userinfo = {
             username: this.ruleForm.username,
-            token: 'dfdfdfdfdfdfdfdfdf'
+            token: 'a3eb6d26-5767-4723-90aa-d6e8691c808b'
           }
           let menus = [{
             'icon': 'el-icon-document',

@@ -1,30 +1,56 @@
 /* eslint-disable space-before-function-paren */
+/* eslint-disable no-trailing-spaces */
 export default {
   /**
-  * 是否为空
-  */
-  isEmpty (obj) {
-    return !obj || obj.length === 0
+   * @param {*} obj 接收一个任意数据
+   * @returns 返回这个任意数据的数据类型
+   */
+  getType (obj) {
+    let type = typeof obj
+    if (type === 'object') {
+      let typeString = Object.prototype.toString.call(obj)
+      if (typeString === '[object Array]') type = 'Array'
+      else if (typeString === '[object Date]') type = 'Date'
+      else if (typeString === '[object RegExp]') type = 'RegExp'
+    }
+    return type
   },
+
+  /**
+   * 用于克隆正则对象
+   * clone 函数使用，外部基本用不着。
+   * @param {*} re 
+   */
+  _getRegExp (re) {
+    let flags = ''
+    if (re.global) flags += 'g'
+    if (re.ignoreCase) flags += 'i'
+    if (re.multiline) flags += 'm'
+    return flags
+  },
+
   /**
    * 对象克隆
    */
   clone (obj) {
-    if (typeof obj !== 'object') return obj
-    let newObj = obj instanceof Array ? [] : {}
+    let type = this.getType(obj)
+    if (type !== 'object') return obj
+    let newObj = type === 'Array' ? [] : {}
     for (let i in obj) {
       let val = obj[i]
-      if (val instanceof Date) {
+      if (type === 'Date') {
         newObj[i] = new Date(val.valueOf())
-      } else if (!val) {
-        newObj[i] = val
+      } else if (type === 'RegExp') {
+        newObj[i] = new RegExp(parent.source, this._getRegExp(parent))
+      } else if (type === 'object') {
+        newObj[i] = this.clone(val)
       } else {
-        newObj[i] = typeof val === 'object' ? this.clone(val) : val
+        newObj[i] = val
       }
     }
     return newObj
   },
-
+  
   /**
    * 接收元素节点以编辑该节点的文本内容。
    * 一般用于做双击编辑，一个元素双击后将元素节点传入该方法，即可实现编辑，离开焦点后即可得到编辑后的最内容
@@ -57,7 +83,7 @@ export default {
       }
     }
   },
-
+  
   /**
    * 复制到粘贴板
    * @param {*} str
@@ -70,67 +96,5 @@ export default {
     document.execCommand('Copy')
     oInput.style.display = 'none'
     document.body.removeChild(oInput)
-  },
-
-  /**
-   * form 域内容记录，用于校验 form 内容变更。
-   * @param {*} els
-   * this.$refs[formName].$el.elements
-   */
-  formContentRecord (els) {
-    for (let el of els) {
-      let type = el.type
-      if (type === 'checkbox' || type === 'radio') {
-        el.defaultChecked = el.checked
-      } else if (
-        type === 'hidden' ||
-        type === 'password' ||
-        type === 'text' ||
-        type === 'textarea'
-      ) {
-        el.defaultValue = el.value
-      } else if (type === 'select-one' || type === 'select-multiple') {
-        for (let opt of el.options) {
-          opt.defaultSelected = opt.selected
-        }
-      }
-    }
-  },
-  /**
-   * form 内容是否有变更
-   * @param {*} els
-   * this.$refs[formName].$el.elements
-   * @returns
-   * From has changed：true
-   * From unchanged：false
-   */
-  formContentIsChange (els) {
-    for (let el of els) {
-      let type = el.type
-      if (type === 'checkbox' || type === 'radio') {
-        if (el.checked !== el.defaultChecked) {
-          console.log('Form element change by the' + el)
-          return true
-        }
-      } else if (
-        type === 'hidden' ||
-        type === 'password' ||
-        type === 'text' ||
-        type === 'textarea'
-      ) {
-        if (el.value !== el.defaultValue) {
-          console.log('Form element change by the' + el)
-          return true
-        }
-      } else if (type === 'select-one' || type === 'select-multiple') {
-        for (let opt of el.options) {
-          if (opt.selected !== opt.defaultSelected) {
-            console.log('Form element change by the' + el)
-            return true
-          }
-        }
-      }
-    }
-    return false
   }
 }

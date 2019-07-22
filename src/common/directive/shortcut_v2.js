@@ -1,5 +1,4 @@
 /* eslint-disable space-before-function-paren */
-/* eslint-disable no-trailing-spaces */
 
 /**
  */
@@ -16,14 +15,9 @@ const KEY09 = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]
  * v-shortcut="{fn: callShortcut}"
  *
  * 非input标签使用
- * v-shortcut:document="{ valid: true, isOnkeyup: false, fn: callShortcut }"
- * 
- * 参数说明：
- * valid: 使监听开始生效（input 标签使用不需设置）
- * isOnkeyup: 是否监听弹起动作（默认：false）
- * callShortcut: 快捷键结果回调
+ * v-shortcut:document="{ valid: true, fn: callShortcut2 }"
  * -----------
- * callShortcut(e, keyValue) {
+ * callShortcut(keyValue) {
  *  console.log('-keyValue-', keyValue)
  *  // 返回 false 禁用快捷键原有(浏览器的)事件，返 true 则不禁用。
  *  return false
@@ -33,25 +27,25 @@ Vue.directive('shortcut', {
   bind: function (el, binding, vnode) {
     _setEvent(el, binding)
   },
+  // inserted: function (el, binding, vnode) {
+  // },
   update: function (el, binding, vnode) {
     _setEvent(el, binding)
   },
+  // componentUpdated: function (el, binding, vnode) {
+  // },
   unbind: function (el, binding) {
     _closeEvent(el, binding)
   }
 })
 
-/**
- * 设置事件
- * @param {*} el 
- * @param {*} binding 
- */
 function _setEvent (el, binding) {
   if (binding.arg === 'document') {
+    el = document
     // 有效标记，为 true 时才有快捷键监听
     if (binding.value.valid) {
-      document.call = binding.value.fn
-      _createEvent(document, binding)
+      el.call = binding.value.fn
+      _createEvent(el, binding)
     }
   } else {
     el.call = binding.value.fn
@@ -59,27 +53,26 @@ function _setEvent (el, binding) {
   }
 }
 
-/**
- * 创建事件
- * @param {*} el 
- * @param {*} binding 
- */
 function _createEvent (el, binding) {
-  // 按键压下时触发
-  el.onkeydown = function (event) {
-    let e = event || window.event
-    /**
-     * 已处理了(shift,alt,ctrl)分别与数字的组合键。
-     * 这之外的快捷键可自行处理，事件 e 已在回调函数中传出
-     */
-    if (el.call && !el.call(_getKeyValue(e), e)) {
-      event.preventDefault()
-      window.event.returnValue = false
+  if (binding.arg === 'document' || (!el.onkeydown) || (!el.onkeyup)) {
+    // 按键压下时触发
+    el.onkeydown = function (event) {
+      let e = event || window.event
+      let keyCode = e.keyCode || e.which
+      let code = e.code
+      let keyValue = null
+      if (e.ctrlKey) {
+        keyValue = _getCombinationKey(CTRL, keyCode, code)
+      } else if (e.altKey) {
+        keyValue = _getCombinationKey(ALT, keyCode, code)
+      } else if (e.shiftKey) {
+        keyValue = _getCombinationKey(SHIFT, keyCode, code)
+      }
+      if (el.call && !el.call(keyValue, e)) {
+        event.preventDefault()
+        window.event.returnValue = false
+      }
     }
-  }
-
-  // 是否监听弹起事件
-  if (binding.value.isOnkeyup) {
     // 按键弹起时触发
     el.onkeyup = function (event) {
       let e = event || window.event
@@ -92,44 +85,12 @@ function _createEvent (el, binding) {
   }
 }
 
-/**
- * 关闭事件
- * @param {*} el 
- * @param {*} binding 
- */
 function _closeEvent (el, binding) {
-  if (binding.arg === 'document') {
-    document.onkeydown = null
-    document.onkeyup = null
-  } else {
-    el.onkeydown = null
-    el.onkeyup = null
-  }
+  if (binding.arg === 'document') el = document
+  el.onkeydown = null
+  el.onkeyup = null
 }
 
-/**
- * 处理了(shift,alt,ctrl)分别与数字的组合键
- * @param {*} e 
- */
-function _getKeyValue (e) {
-  let keyCode = e.keyCode || e.which
-  let code = e.code
-  let keyValue = null
-  if (e.ctrlKey) {
-    keyValue = _getCombinationKey(CTRL, keyCode, code)
-  } else if (e.altKey) {
-    keyValue = _getCombinationKey(ALT, keyCode, code)
-  } else if (e.shiftKey) {
-    keyValue = _getCombinationKey(SHIFT, keyCode, code)
-  }
-  return keyValue
-}
-/**
- * 获取组合键
- * @param {*} key 
- * @param {*} keyCode 
- * @param {*} code 
- */
 function _getCombinationKey (key, keyCode, code) {
   let keyValue = null
   switch (keyCode) {

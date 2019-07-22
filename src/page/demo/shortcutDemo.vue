@@ -67,7 +67,7 @@
             </div>
             <div>Demo1可全选：单选和多选（压下ctrl键）</div>
 
-            <ul v-shortcut:document="{ valid: demoRadioSel == '1', fn: callShortcut2 }">
+            <ul v-shortcut:document="{ valid: demoRadioSel == '1', isOnkeyup: true, fn: callShortcut2 }">
               <li style="margin: 5px;"
                   v-for="(v, i) in arr1"
                   :key="i"
@@ -78,7 +78,7 @@
             </ul>
 
             <div>Demo2可全选：单选和多选（压下ctrl键）</div>
-            <ul v-shortcut:document="{ valid: demoRadioSel == '2', fn: callShortcut2 }">
+            <ul v-shortcut:document="{ valid: demoRadioSel == '2', isOnkeyup: true, fn: callShortcut2 }">
               <li style="margin: 5px;"
                   v-for="(v, i) in arr2"
                   :key="i"
@@ -162,7 +162,6 @@ export default {
     },
     callShortcut2 (keyValue, e) {
       this.ctrlDown = e.ctrlKey
-      console.log('ctrlDown', this.ctrlDown)
       return true
     },
     clickSelected1 (v) {

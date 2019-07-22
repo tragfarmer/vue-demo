@@ -8,19 +8,17 @@ import '@/assets/css/medit.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/zh-CN'
-import { Fetch, Post, Patch, Put } from '@/common/http.js'
 import User from '@/common/user.js'
+import Req from '@/common/req.js'
 import Store from '@/vuex/index.js'
 import '@/common/directive/shortcut.js'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, { locale })
-Vue.prototype.$fetch = Fetch
-Vue.prototype.$post = Post
-Vue.prototype.$patch = Patch
-Vue.prototype.$put = Put
+
 Vue.prototype.$store = Store
+Vue.prototype.$req = Req
 
 let routeList = []
 router.beforeEach((to, from, next) => {
